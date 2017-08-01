@@ -1,0 +1,126 @@
+#!/bin/bash
+
+function checkDepends(){
+	if ! which mplayer > /dev/null || ! which identify > /dev/null ;then
+		echo "No dependencies installed on system. PLS install Mplayer and ImageMagick"
+		exit 2
+	fi
+}
+
+function getDateFromIMG(){
+	local fulldate=`identify -verbose $1 | grep DateTimeOriginal`
+	data=`echo $fulldate | awk '{print $2}' | tr ':' '-'` 
+	godzina=`echo $fulldate | awk '{print $3}' | tr ':' '.'`
+	roz=`echo ${1##*.} | tr A-Z a-z`
+}
+
+function getDateFromMOV(){
+	local fulldate=`mplayer -really-quiet -identify -frames 0 -vo null -nosound -nolirc $1 | grep -A 1 creation_time | tail -1 | cut -d '=' -f 2`
+	data=`echo $fulldate | cut -d "T" -f 1` 
+	godzina=`echo $fulldate | cut -d "T" -f 2 | cut -d '.' -f 1 |  tr ':' '.'`
+	roz=`echo ${1##*.} | tr A-Z a-z`
+}
+
+function copyOrMove(){
+	if [ $save == 0 ]; then
+		mv --backup=t -v $1 $data\ $godzina$counter.$roz
+	else
+		cp --backup=t -vp $1 $data\ $godzina$counter.$roz
+	fi
+}
+
+function checkDiff(){
+	for i in ${EXISTINGARRAY[*]}; do
+		diff $1 $i &> /dev/null
+		if [ $? -eq 0 ]; then
+			echo "$1 aready exist"
+			#rm $1
+			return 1
+		fi
+	done
+	return 0
+}
+
+function changeName(){
+	# Ignoruj spacje w argumencie	
+	SAVEIFS=$IFS
+	IFS=$(echo -en "\n\b")	
+
+	#Sprawdź czy plik jest obrazem
+	if file $1 | grep image > /dev/null ; then
+		getDateFromIMG $1
+	elif file $1 | grep -i media > /dev/null ; then
+		getDateFromMOV $1
+	else
+		echo "Probably specyfied file ($1) is not image or video clip"
+		return 2
+	fi
+
+	if [[ ! $data ]] || [[ ! $godzina ]] || [[ ! $roz ]]; then
+		echo "Probably specified file ($1) has no EXIF data available. Exiting ..."
+		return 2
+	else
+		EXISTINGARRAY=(`ls $data\ $godzina* 2> /dev/null`)
+		#echo ${EXISTINGARRAY[*]}
+		counter=${#EXISTINGARRAY[*]}
+		case $counter in
+			0)
+				counter=""
+				copyOrMove $1
+				#echo "0 - kopiuje $1 ---> $data\ $godzina$counter.$roz"
+			;;
+			1)
+				checkDiff $1 || return 3
+				mv --backup=t $data\ $godzina.$roz $data\ $godzina-0.$roz
+				counter="-$counter"
+				#echo "1 - kopiuje $1 ---> $data\ $godzina$counter.$roz"				
+				copyOrMove $1
+				
+			;;
+			*)
+				checkDiff $1 || return 3
+				counter="-$counter"
+				#echo "2+ - kopiuje $1 ---> $data\ $godzina$counter.$roz"				
+				copyOrMove $1
+			;;
+		esac
+	fi
+	# Przywróć stary IFS
+	IFS=$SAVEIFS
+}
+
+function help(){
+	echo -e "Usage:\n\tnameIT IMG1.jpg IMG2.jpg\n\tnameIT --cp IMG1.jpg IMG2.jpg\nHint:\n\tnameIT *.[Jj][pP][gG]"
+}
+
+function main(){
+	checkDepends
+	# Połącz argumenty z \ w całość
+	for args in "$@"
+	do
+		if [[  $args == "--save" ]] || [[ $args == "--cp" ]] ;then
+			continue
+		else
+			changeName "$args" 
+		fi
+	done
+}
+
+case $1 in
+	--help|-h)
+		help
+	;;
+	"")
+		help
+	;;
+	--save|--cp)
+		save=1
+		main "$@"
+	;;
+	*)
+		save=0
+		main "$@"
+		#echo $?
+	;;
+esac
+
