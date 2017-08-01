@@ -77,7 +77,7 @@ fi
 alias ipx='grep -Eo "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"'
 alias active_grep_only='grep -Ev "^#|^$"'
 alias whatismyipaddr="curl http://myip.dnsomatic.com && echo"
-alias pogoda="wget -q -O - wttr.in/KRK"
+alias weather="wget -q -O - wttr.in/KRK"
 alias internetspeed="wget -O /dev/null data.interia.pl/100mb"
 alias script="script -a -q"
 alias 8="ping -c 5 8.8.8.8"
