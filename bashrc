@@ -23,10 +23,6 @@ if [ -x /usr/bin/dircolors ]; then
 	alias grep='grep --color=auto'
 	alias fgrep='fgrep --color=auto'
 	alias egrep='egrep --color=auto'
-	# some more ls aliases
-	alias ll='ls -l'
-	alias la='ls -A'
-	#alias l='ls -CF'
 fi
 
 # bash completion
@@ -81,6 +77,11 @@ if [ -f ~/.bash_aliases ]; then
 	. ~/.bash_aliases
 fi
 
+# some more ls aliases
+alias ll='ls -l'
+alias la='ls -A'
+#alias l='ls -CF'
+alias su='su -'
 alias ipx='grep -Eo "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"'
 alias active_grep_only='grep -Ev "^#|^$"'
 alias whatismyipaddr="curl http://myip.dnsomatic.com && echo"
