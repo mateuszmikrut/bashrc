@@ -35,11 +35,10 @@ if ! shopt -oq posix; then
 fi
 
 
-# ssh agents
-function agent_start(){
+# agents
+function ssh_agent_start(){
 	if [ ! -f /tmp/agent.$USER ]; then
 		ssh-agent > /tmp/agent.$USER
-		gpg-agent --daemon --default-cache-ttl $((60*24*60*60)) --max-cache-ttl $((61*24*60*60)) --pinentry-program=`which pinentry-curses` >> /tmp/agent.$USER 2> /dev/null
 		chmod 700 /tmp/agent.$USER
 		eval `cat /tmp/agent.$USER` > /dev/null
 	else
@@ -47,13 +46,18 @@ function agent_start(){
 	fi
 }
 
-function agent_stop(){
-	killall gpg-agent ssh-agent
+function ssh_agent_stop(){
+	killall ssh-agent
 	rm -f /tmp/agent.$USER
 }
 
-function agent_check(){
-	for i in ssh-agent gpg-agent pinentry-curses ; do	
+function gpg_agent_start(){
+	# Only headless mode
+	gpg-agent --daemon --default-cache-ttl $((60*24*60*60)) --max-cache-ttl $((61*24*60*60)) --pinentry-program=`which pinentry-curses` >> /tmp/agent.$USER 2> /dev/null
+}
+
+function gpg_agent_check(){
+	for i in gpg-agent pinentry-curses ; do	
 		which $i &> /dev/null && echo -e "$i\tOK" || echo -e "$i\tNOK"
 	done
 }
