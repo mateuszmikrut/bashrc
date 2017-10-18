@@ -38,7 +38,10 @@ fi
 # agents
 function agent_start(){
 	if [ ! -f /tmp/agent.$USER ]; then
-		gpg-agent --daemon --default-cache-ttl $((60*24*60*60)) --max-cache-ttl $((61*24*60*60)) --pinentry-program=`which pinentry-curses` > /tmp/agent.$USER 2> /dev/null
+		# gpg agent will start automatically
+		# ~/.gnupg/gpg.conf
+		# ~/.gnupg/gpg-agent.conf
+
 		ssh-agent >> /tmp/agent.$USER
 		chmod 700 /tmp/agent.$USER
 		eval `cat /tmp/agent.$USER` > /dev/null
@@ -58,6 +61,7 @@ function agent_check(){
 	done
 }
 
+# PS1
 function PS1_set(){
 	# PPID=`ps -o ppid |sed -n 2p` 
 	export PS_color=$1	
