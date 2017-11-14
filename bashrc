@@ -9,7 +9,7 @@ HISTCONTROL=ignoreboth #Ignore doubled cmd
 shopt -s histappend #Append hist
 HISTSIZE=1000000
 HISTFILESIZE=1000000
-HISTTIMEFORMAT="{%m.%d %H:%M:%S} "
+HISTTIMEFORMAT="[%Y-%m-%d %H:%M:%S] "
 
 # Window control - check the window size after each command
 shopt -s checkwinsize
