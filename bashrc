@@ -64,11 +64,11 @@ function agent_check(){
 # PS1
 function PS1_set(){
 	# PPID=`ps -o ppid |sed -n 2p` 
-	export PS_color=$1	
+	PS_color=$1	
 	if `ps -e | grep $PPID | grep [s]cript$ > /dev/null`; then
-		export PS1='[\[\033[0;33m\]SCR \[\033[${PS_color}m\]\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]]$(if [ $? == 0 ]; then echo "\[\033[00;32m\]" ; else echo "\[\033[00;31m\]"; fi)\$ \[\033[00m\]'
+		PS1='[\[\033[0;33m\]SCR \[\033[${PS_color}m\]\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]]$(if [ $? == 0 ]; then echo "\[\033[00;32m\]" ; else echo "\[\033[00;31m\]"; fi)\$ \[\033[00m\]'
 	else
-		export PS1='[\[\033[${PS_color}m\]\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]]$(if [ $? == 0 ]; then echo "\[\033[00;32m\]" ; else echo "\[\033[00;31m\]"; fi)\$ \[\033[00m\]'
+		PS1='[\[\033[${PS_color}m\]\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]]$(if [ $? == 0 ]; then echo "\[\033[00;32m\]" ; else echo "\[\033[00;31m\]"; fi)\$ \[\033[00m\]'
 	fi
 }
 
@@ -77,7 +77,7 @@ PS1_set '1;32'
 export PROMPT_COMMAND='printf "\033]0;%s\033\\" "${HOSTNAME}"'
 
 # Aliases
-if [ -f ~/.bash_aliases ]; then
+if [ -f ~/.bash_liases ]; then
 	. ~/.bash_aliases
 fi
 
@@ -86,6 +86,7 @@ alias ll='ls -l'
 alias la='ls -A'
 #alias l='ls -CF'
 alias su='su -'
+alias ssh='ssh -A -o ServerAliveInterval=120'
 alias ipx='grep -Eo "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"'
 alias active_grep_only='grep -Ev "^#|^$"'
 alias whatismyipaddr="curl http://myip.dnsomatic.com && echo"
