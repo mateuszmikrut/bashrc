@@ -67,6 +67,7 @@ function agent_loadkeys(){
     ssh-add -l > /dev/null
     if [ $? -gt 0 ]; then
         echo -n "Load keys y/[n]? "
+        read
         case $REPLY in
             y | Y | yes ) 
                 ssh-add $1
