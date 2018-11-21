@@ -63,7 +63,17 @@ function agent_check(){
 
 function agent_loadkeys(){
     # $1 - ssh key file
+    if [ -z $1 ]; then
+        >&2 echo "SSH key path not specified"
+        return 1
+    fi
+
     # $2 - gpg recipient email
+    if [ -z $2 ]; then
+        >&2 echo "GPG recipient not specified"
+        return 2
+    fi
+
     ssh-add -l > /dev/null
     if [ $? -gt 0 ]; then
         echo -n "Load keys y/[n]? "
