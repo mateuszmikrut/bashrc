@@ -1,0 +1,77 @@
+######
+#Z PROCEDURY
+######
+#perforce
+username=`whoami`
+export P4CONFIG=.perforce
+export P4USER=$username
+P4PORT='rsh:ssh -q -a -x -l p4ssh perforce.akamai.com /bin/true'
+# shell servers
+alias se="ssh -A $USER@shell-east.corp.akamai.com"
+alias sw="ssh -A $USER@shell-west.corp.akamai.com"
+alias sb="ssh -A -2 $USER@shell-blr.corp.akamai.com"
+
+# lsg's
+alias lsg1="ssh -A -2 -l $username lsg-nocc1.netmgmt.akamai.com"
+alias lsg2="ssh -A -2 -l $username lsg-nocc2.netmgmt.akamai.com"
+alias lsg3="ssh -A -2 -l $username lsg-nocc3.netmgmt.akamai.com"
+alias lsg4="ssh -A -2 -l $username lsg-nocc4.netmgmt.akamai.com"
+alias lsg5="ssh -A -2 -l $username lsg-nocc5.netmgmt.akamai.com"
+alias lsg6="ssh -A -2 -l $username lsg-nocc6.netmgmt.akamai.com"
+alias lsg7="ssh -A -2 -l $username lsg-nocc7.netmgmt.akamai.com"
+alias lsg8="ssh -A -2 -l $username lsg-nocc8.netmgmt.akamai.com"
+
+#Intl LSGs
+alias i1="ssh -A -2 -l $username lsg-intl1.netmgmt.akamai.com"
+alias i2="ssh -A -2 -l $username lsg-intl2.netmgmt.akamai.com"
+alias i3="ssh -A -2 -l $username lsg-intl3.netmgmt.akamai.com"
+alias i4="ssh -A -2 -l $username lsg-intl4.netmgmt.akamai.com"
+alias i5="ssh -A -2 -l $username lsg-intl5.netmgmt.akamai.com"
+alias i6="ssh -A -2 -l $username lsg-intl6.netmgmt.akamai.com"
+alias i7="ssh -A -2 -l $username lsg-intl7.netmgmt.akamai.com"
+alias i8="ssh -A -2 -l $username lsg-intl8.netmgmt.akamai.com"
+
+#Install Gateways
+alias gw1="gwsh noccgrp@noccgw1.netmgmt.akamai.com"
+alias gw2="gwsh noccgrp@noccgw2.netmgmt.akamai.com"
+alias gw3="echo 'there is no gw3'"
+alias gw4="echo 'there is no gw4'"
+alias gw5="gwsh noccgrp@noccgw5.netmgmt.akamai.com"
+alias gw6="gwsh noccgrp@noccgw6.netmgmt.akamai.com"
+alias gw7="gwsh noccgrp@noccgw7.netmgmt.akamai.com"
+alias gw8="gwsh noccgrp@noccgw8.netmgmt.akamai.com"
+alias gw9="gwsh noccgrp@noccgw9.netmgmt.akamai.com"
+
+#Senior Gateways
+alias slsg1="ssh -A -2 -l $username lsg-snr1.netmgmt.akamai.com"
+alias slsg2="ssh -A -2 -l $username lsg-snr2.netmgmt.akamai.com"
+alias slsg3="ssh -A -2 -l $username lsg-snr3.netmgmt.akamai.com"
+alias slsg4="ssh -A -2 -l $username lsg-snr4.netmgmt.akamai.com"
+alias slsg5="ssh -A -2 -l $username lsg-snr5.netmgmt.akamai.com"
+alias slsg6="ssh -A -2 -l $username lsg-snr6.netmgmt.akamai.com"
+
+#Authgate
+#alias _ag='SSH_AUTH_SOCK="" /usr/bin/ssh -2 authgate@authui.nocc.akamai.com'
+alias _ag='ssh authgate@authui.nocc.akamai.com'
+#alias _ag_test='SSH_AUTH_SOCK="" /usr/bin/ssh -2 authgate@72.246.199.50'
+
+#Load Keys
+agent_start
+ssh-add -l > /dev/null
+if [ $? -gt 0 ]; then
+        ssh-add ~/keys/mmikrut-deployed-current;
+        ssh-add ~/keys/mmikrut-internal-current;
+        ssh-add ~/keys/mmikrut-admin-current;
+        #ssh-add ~/keys/mmikrut-external-2016-09-08;
+fi
+
+#PATH
+PATH=$PATH:/usr/local/akamai/monocle/monocle
+
+#PS
+PS1_set '1;35'
+
+SLSG="lsg-snr1.netmgmt.akamai.com lsg-snr2.netmgmt.akamai.com lsg-snr3.netmgmt.akamai.com lsg-snr4.netmgmt.akamai.com lsg-snr5.netmgmt.akamai.com lsg-snr6.netmgmt.akamai.com "
+alias start_synergy=" /usr/bin/synergyc --no-tray --debug INFO --name krk-lpidf --crypto-mode ofb --crypto-pass d6b738a215a4586d437acdc5fc8afbeb laptop:24800"
+alias LOCK="cinnamon-screensaver-command -l"
+

@@ -1,0 +1,46 @@
+# Vars
+EMAIL="mateusz.mikrut@gmail.com"
+mydomain="lubiecyce.tk"
+
+# Load keys function
+function agent_loadkeys_kali(){
+	ssh-add -l > /dev/null
+	if [ $? -gt 0 ]; then
+		echo -n "Load ssh keys y/[n]? "
+		read ans
+		case $ans in
+			y | Y | yes ) 
+				ssh-add ~/.ssh/micro_ssh_key
+				echo -n "Load gpg keys as well y/[n]? "
+				read ans1
+				case $ans1 in
+				y | Y | yes ) 
+					date | gpg -r $EMAIL -e > /tmp/$$ && gpg -d /tmp/$$ && rm -f /tmp/$$
+				;;
+				*)
+					echo "Not loading gpg keys this time"
+				;;
+				esac
+			;;
+			*)
+				echo "Not loading keys this time"
+			;;
+		esac
+	fi
+}
+
+
+# Start agents
+agent_start
+agent_loadkeys_kali
+
+# PS1 to cyan
+#PS1_set '1;36'
+
+# Aliasy
+alias aktualizacja="sudo aptitude update && sudo aptitude upgrade -y"
+alias malina="ssh -l micro amazinglobster"
+alias bumar_ARSKW-router='ssh -l admin 79.187.86.124'
+alias dlk='rdesktop 83.18.106.130 -g 1200x800 -u Administrator'
+alias convert_all_mov_to_mp4='SAVEIFS=$IFS ; IFS=$(echo -en "\n\b") ; for i in *.[mM][oO][vV] ; do tmpfile=`date +%s`.mp4 ; avconv -i $i -c:v libx264  -strict experimental $tmpfile && rm  -v $i ; exifName $tmpfile ; done ; IFS=$SAVEIFS'
+alias go_silent="sudo service ntp stop; killall chrome; killall spotify ; dropbox stop"

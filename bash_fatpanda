@@ -1,0 +1,39 @@
+# Vars
+EMAIL="mateusz.mikrut@gmail.com"
+mydomain="lubiecyce.tk"
+
+# Load keys
+function agent_loadkeys(){
+	ssh-add -l &> /dev/null
+	if [ $? -gt 0 ]; then
+		echo -n "Load keys y/[n]? "
+		read ans
+		case $ans in
+			y | Y | yes ) 
+				ssh-add ~/.ssh/micro_ssh_key
+				date | gpg -r $EMAIL -e > /tmp/$$ && gpg -d /tmp/$$ && rm -f /tmp/$$
+			;;
+			*)
+				echo "Not loading keys this time"
+			;;
+		esac
+	fi
+}
+
+# Start agents
+agent_start
+agent_loadkeys
+
+# more aliases
+alias aktualizacja="sudo aptitude update && sudo aptitude upgrade -y"
+alias w_domu="sudo ifdown eth0 ; sudo ifup eth2 ; sudo service openvpn stop"
+alias w_pracy="sudo ifdown eth2 ; sudo ifup eth0;  sudo service openvpn start"
+alias bumar_ARSKW-router='ssh -l admin 79.187.86.124'
+#alias convert_all_mp4_to_mp4='SAVEIFS=$IFS ; IFS=$(echo -en "\n\b") ; for i in *.[mM][pP][4] ; do tmpfile=`date +%s`.mp4 ; avconv -i $i -c:v libx264  -strict experimental $tmpfile && rm  -v $i ; exifName $tmpfile ; done ; IFS=$SAVEIFS'
+alias convert_all_mov_to_mp4='SAVEIFS=$IFS ; IFS=$(echo -en "\n\b") ; exifName *.[mM][oO][vV] ; for i in *.[mM][oO][vV] ; do tmpfile=`date +%s`.mp4 ; ffmpeg -i $i -c:v libx264 $tmpfile && mv $tmpfile  $i ; done ; IFS=$SAVEIFS'
+
+
+alias dom_access="nmcli connection up dom_access"
+alias dom_tunnel="nmcli connection up dom_tunnel"
+synclient VertScrollDelta=-111 2> /dev/null
+#synclient HorizScrollDelta=-102
