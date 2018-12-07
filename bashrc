@@ -37,17 +37,19 @@ fi
 
 # agents
 function agent_start(){
+    # SSH agent
     if [ ! -f /tmp/agent.$USER ]; then
-        # gpg agent will start automatically
-        # ~/.gnupg/gpg.conf
-        # ~/.gnupg/gpg-agent.conf
-
         ssh-agent >> /tmp/agent.$USER
         chmod 700 /tmp/agent.$USER
         eval `cat /tmp/agent.$USER` > /dev/null
     else
         eval `cat /tmp/agent.$USER` > /dev/null
     fi
+
+    # GPG agent
+    # It will start automatically per config:
+    # ~/.gnupg/gpg.conf
+    # ~/.gnupg/gpg-agent.conf
 }
 
 function agent_stop(){
@@ -74,7 +76,7 @@ function agent_load_gpg_key(){
         >&2 echo "\$EMAIL variable not specified"
         return 1
     fi
-    date | gpg -r $EMAIL -e > /tmp/$$ && gpg -d /tmp/$$ && rm -f /tmp/$$
+    date | gpg -r $EMAIL -e > /tmp/$$ && gpg -d /tmp/$$ &>/dev/null && rm -f /tmp/$$ || return 1
 }
 
 # PS1
