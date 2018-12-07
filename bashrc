@@ -70,7 +70,7 @@ function agent_load_ssh_key(){
 }
 
 function agent_load_gpg_key(){
-    if [ -z $2 ]; then
+    if [ -z $EMAIL ]; then
         >&2 echo "\$EMAIL variable not specified"
         return 1
     fi
