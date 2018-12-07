@@ -61,33 +61,20 @@ function agent_check(){
     done
 }
 
-function agent_loadkeys(){
-    # $1 - ssh key file
-    if [ -z $1 ]; then
-        >&2 echo "SSH key path not specified"
+function agent_load_ssh_key(){
+    if [ -z $SSHKEY ]; then
+        >&2 echo "\$SSHKEY variable not specified"
         return 1
     fi
+    ssh-add -l 2> /dev/null || ssh-add $SSHKEY
+}
 
-    # $2 - gpg recipient email
+function agent_load_gpg_key(){
     if [ -z $2 ]; then
-        >&2 echo "GPG recipient not specified"
-        return 2
+        >&2 echo "\$EMAIL variable not specified"
+        return 1
     fi
-
-    ssh-add -l > /dev/null
-    if [ $? -gt 0 ]; then
-        echo -n "Load keys y/[n]? "
-        read
-        case $REPLY in
-            y | Y | yes ) 
-                ssh-add $1
-                date | gpg -r $2 -e > /tmp/$$ && gpg -d /tmp/$$ && rm -f /tmp/$$
-            ;;
-            *)
-                echo "Not loading keys this time"
-            ;;
-        esac
-    fi
+    date | gpg -r $EMAIL -e > /tmp/$$ && gpg -d /tmp/$$ && rm -f /tmp/$$
 }
 
 # PS1
@@ -123,6 +110,7 @@ alias weather="wget -q -O - wttr.in/KRK"
 alias internetspeed="wget -O /dev/null data.interia.pl/100mb"
 alias script="script -a -q"
 alias 8="ping -c 5 8.8.8.8"
+
 
 # Host specific addons
 if [ -f ~/.bash_$HOSTNAME ]; then
