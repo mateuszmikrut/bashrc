@@ -68,7 +68,7 @@ function agent_load_ssh_key(){
         >&2 echo "\$SSHKEY variable not specified"
         return 1
     fi
-    ssh-add -l 2> /dev/null || ssh-add $SSHKEY
+    ssh-add -l &> /dev/null || ssh-add $SSHKEY
 }
 
 function agent_load_gpg_key(){
