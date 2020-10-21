@@ -91,7 +91,11 @@ function PS1_set(){
 }
 
 # Set PS1 to green - default
-PS1_set '1;32'
+if [ $(whoami) == 'root' ];then
+  PS1_set '1;31'
+else
+  PS1_set '1;32'
+fi
 export PROMPT_COMMAND='printf "\033]0;%s\033\\" "${HOSTNAME}"'
 
 # Aliases
