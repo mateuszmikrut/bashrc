@@ -124,8 +124,9 @@ if [ -f ~/.bash_$HOSTNAME ]; then
 fi
 
 # PATH
-if [ -d "$HOME/bin" ] ; then
-    echo $PATH | grep $HOME/bin &> /dev/null || PATH="$HOME/bin:$PATH"
-fi
-
+for i in $HOME/bin $HOME/.local/bin; do
+    if [ -d $i ] ; then
+        echo $PATH | grep $i &> /dev/null || PATH="$i:$PATH"
+    fi
+done
 
