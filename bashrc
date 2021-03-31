@@ -64,11 +64,19 @@ function agent_check(){
 }
 
 function agent_load_ssh_key(){
-    if [ -z $SSHKEY ]; then
-        >&2 echo "\$SSHKEY variable not specified"
+    if [ -z "$SSHKEYS" ]; then
+        >&2 echo -e "\$SSHKEYS variable not specified\nex: SSHKEYS=\"~/.ssh/id_rsa ~/.ssh/id_dsa\""
         return 1
     fi
-    ssh-add -l &> /dev/null || ssh-add $SSHKEY
+    tildefix=`echo $SSHKEYS | sed "s|~|${HOME}|g"`
+    for k in $tildefix; do
+        fingerprint=`ssh-keygen -l -f "$k" 2>/dev/null | cut -f2 -d ' '`
+        if [ $fingerprint ]; then
+            ssh-add -l | grep $fingerprint &>/dev/null || ssh-add $k
+        else
+            >&2 echo "Key $k not found"
+        fi
+    done
 }
 
 function agent_load_gpg_key(){
