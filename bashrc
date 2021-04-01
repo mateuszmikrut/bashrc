@@ -116,7 +116,7 @@ alias ll='ls -l'
 alias la='ls -A'
 #alias l='ls -CF'
 alias su='su -'
-alias ssh='ssh -A -o ServerAliveInterval=120'
+alias ssh='ssh -o ServerAliveInterval=120'
 alias ipx='grep -Eo "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"'
 alias active_grep_only='grep -Ev "^#|^$"'
 alias whatismyipaddr="curl http://myip.dnsomatic.com && echo"
