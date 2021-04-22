@@ -1,41 +1,53 @@
+################
+# Init
+################
+
 # If not running interactively, don't do anything
 case $- in
-    *i*) ;;
-      *) return;;
+  *i*) ;;
+    *) return;;
 esac
 
-# History
-HISTCONTROL=ignoreboth #Ignore doubled cmd
-shopt -s histappend #Append hist
-HISTSIZE=1000000
-HISTFILESIZE=1000000
-HISTTIMEFORMAT="[%Y-%m-%d %H:%M:%S] "
+# OS vars
+OS=$(uname -s)
 
-# Window control - check the window size after each command
-shopt -s checkwinsize
 
-# Color in ls and grep
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-fi
-
-# bash completion
-if ! shopt -oq posix; then
-    if [ -f /usr/share/bash-completion/bash_completion ]; then
-        . /usr/share/bash-completion/bash_completion
-    elif [ -f /etc/bash_completion ]; then
-        . /etc/bash_completion
-    elif [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then
-        . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+# OS specyfic actionscolors
+case $OS in 
+  "Linux" ) 
+    # Color in ls and grep
+    if [ -x /usr/bin/dircolors ]; then
+      test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+      alias ls='ls --color=auto'
+      #alias dir='dir --color=auto'
+      #alias vdir='vdir --color=auto'
+      alias grep='grep --color=auto'
+      alias fgrep='fgrep --color=auto'
+      alias egrep='egrep --color=auto'
     fi
-fi
+    # bash completion
+    if ! shopt -oq posix; then
+      if [ -f /usr/share/bash-completion/bash_completion ]; then
+        . /usr/share/bash-completion/bash_completion
+      elif [ -f /etc/bash_completion ]; then
+        . /etc/bash_completion
+      fi
+    fi
+  ;;
 
+  "Darwin" )
+    # bash completion
+    [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+    # colors
+    export CLICOLOR=1
+    export LSCOLORS=GxFxCxDxBxegedabagaced
+  ;;
+esac
+
+
+################
+# Functions
+################
 
 # agents
 function agent_start(){
@@ -55,7 +67,7 @@ function agent_start(){
 }
 
 function agent_stop(){
-    ps -ef  | grep $USER | egrep "[g]pg-agent|[s]sh-agent" | awk '{print $2}' | while read a ; do kill -9 $a; done
+    ps -u $USER | egrep "[g]pg-agent|[s]sh-agent" | awk '{print $2}' | while read a ; do kill -9 $a; done
     rm -f /tmp/agent.$USER
 }
 
@@ -100,16 +112,45 @@ function PS1_set(){
     fi
 }
 
+
+################
+# Common for all OSes
+################
+
+# PATH
+for i in $HOME/bin $HOME/.local/bin; do
+  if [ -d $i ] ; then
+    echo $PATH | grep $i &> /dev/null || PATH="$i:$PATH"
+  fi
+done
+
+# History
+HISTCONTROL=ignoreboth #Ignore doubled cmd
+shopt -s histappend #Append hist
+HISTSIZE=1000000
+HISTFILESIZE=1000000
+HISTTIMEFORMAT="[%Y-%m-%d %H:%M:%S] "
+
+# Window control - check the window size after each command
+shopt -s checkwinsize
+
 # Set PS1 to green - default
 if [ $(whoami) == 'root' ];then
   PS1_set '1;31'
 else
   PS1_set '1;32'
 fi
+
+# Bar title
 export PROMPT_COMMAND='printf "\033]0;%s\033\\" "${HOSTNAME}"'
 
+
+################
 # Aliases
-if [ -f ~/.bash_liases ]; then
+################
+
+# Import bash_aliases
+if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
@@ -128,15 +169,11 @@ alias script="script -a -q"
 alias 8="ping -c 5 8.8.8.8"
 
 
+################
 # Host specific addons
+################
 if [ -f ~/.bash_$HOSTNAME ]; then
     . ~/.bash_$HOSTNAME
 fi
 
-# PATH
-for i in $HOME/bin $HOME/.local/bin; do
-    if [ -d $i ] ; then
-        echo $PATH | grep $i &> /dev/null || PATH="$i:$PATH"
-    fi
-done
 
